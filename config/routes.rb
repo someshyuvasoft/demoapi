@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # devise_for :users       
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
- namespace :api do                                                                            
+  namespace :api do                                                                            
      namespace :v1 do                                                                         
           devise_scope :user do                                                               
             post 'signup' => 'registrations#create'                                   
@@ -15,12 +15,8 @@ Rails.application.routes.draw do
             post 'create' => 'company#create'            
             put 'update' => 'company#update'  
             delete 'destroy'=>'company#destroy'   
-            get 'show' =>'company#show'                                                                              
-     #  resources :company                                           
+            get 'show' =>'company#show'                                                                                                          
       end                                                                                             
   end                                                               
-
 end
-    
-
  
