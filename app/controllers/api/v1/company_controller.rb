@@ -1,48 +1,56 @@
 class Api::V1::CompanyController < Api::ApiController
-  before_action :current_user
+  before_action :current_user, except: :show
 
   def create
-   # debugger
-     @company=current_user.build_company(company_params)
-       if @company.save
-          render json:{status:"success",message:"loaded company",data:@company},status:  :ok
-       else
-          render json:{status:"failed",message:"company not save", data:@company.errors},status:  :unprocessable_entity
-      end
+    if current_user.present?
+    @company=current_user.build_company(company_params)
+     if @company.save
+       render json:{status:"success",message:"loaded company",data:@company},status:  :ok
+     else
+       render json:{status:"failed",message:"company not save", data:@company.errors},status:  :unprocessable_entity
+     end
+   else
+     render json:{status:"failed",message:"User not found"}
+
+   end
+
   end
 
   def update
-    debugger
-    @company=Company.find(params[:id])
-      if @company.save
-          render json:{status:"success",message:"loaded company",data:@company},status:  :ok
-       else
-          render json:{status:"failed",message:"company not save", data:@company.errors},status:  :unprocessable_entity
-      end
+   @company=Company.find(params[:id])
+    if @company.update(company_params)
+      render json:{status:"success",message:"loaded company",data:@company},status:  :ok
+    else
+      render json:{status:"failed",message:"company not save", data:@company.errors},status:  :unprocessable_entity
+    end
   end
 
- def show
-    @company = Company.find(params[:id])
-    render json:{status:"success",message:"loaded company",data:@company},status:  :ok
- end
+  def show
+    @companys = Company.all
+    user = []
+    @companys.each do |data|
+      user.push(data.attributes.merge(users_details: data.user))
+    end
+    render json:{success: true,company:user }
+  end
 
- def destroy
+  def destroy
     @company = Company.find(params[:id])
     @company.destroy
     render json:{status:"success",message:"loaded company",data:@company},status:  :ok   
- end
+  end
 
-private
+  private
   def company_params
     params.permit(:name,:salary,:address)
   end
 
   def current_user
     token =params[:auth_token]
-    if token
-      @current_user ||= User.find_by_auth_token(token)
-    else
-      render json:{ status:"failed",message:"failed"} 
-    end
+      if token
+        @current_user ||= User.find_by_auth_token(token)
+      else
+        render json:{ status:"failed",message:"failed"} 
+      end
   end
 end

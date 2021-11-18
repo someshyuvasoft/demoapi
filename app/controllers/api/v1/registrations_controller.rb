@@ -18,7 +18,7 @@ class Api::V1::RegistrationsController < Api::ApiController
    end
    private
    def user_params
-    params.require(:user).permit(:email,:password,:password_confirmation,:first_name,:last_name,:gender)
+    params.require(:user).permit(:email,:password,:password_confirmation,:first_name,:last_name,:gender,:auth_token)
    end
     def check_user
       if User.exists?(email: params[:user][:email])
