@@ -6,12 +6,10 @@ class Api::V1::SessionsController < Api::ApiController
   def create
     resource = User.find_for_database_authentication(email: params[:user][:email])
     return invalid_login_attempt unless resource
-      if resource.valid_password?(params[:user][:password])
-        sign_in("user", resource)
-        render json: {status: "successful", user: { id: resource.id, email: resource.email, auth_token: resource.auth_token, created_at: resource.created_at, updated_at: resource.updated_at }}
-      return
-  end
-    invalid_login_attempt
+    if resource.valid_password?(params[:user][:password])
+      sign_in("user", resource)
+      render json: {status: "successful", user: { id: resource.id, email: resource.email, auth_token: resource.auth_token, created_at: resource.created_at, updated_at: resource.updated_at }}
+    end
   end
 
   def destroy
