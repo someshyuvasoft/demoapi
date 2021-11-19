@@ -27,11 +27,15 @@ class Api::V1::CompanyController < Api::ApiController
 
   def show
     @companys = Company.all
+   if @companys.present?
     user = []
     @companys.each do |data|
       user.push(data.attributes.merge(users_details: data.user))
     end
     render json:{success: true,company:user }
+   else
+      render json:{Failed: "company not found" }
+   end
   end
 
   def destroy
